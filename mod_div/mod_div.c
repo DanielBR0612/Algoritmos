@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+//deu certo
 int mod(int a, int b){
     if (a < b){
         return a;
