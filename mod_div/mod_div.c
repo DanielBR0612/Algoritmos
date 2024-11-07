@@ -14,7 +14,7 @@ int div(int a, int b){
         return 0;
     }
     else{
-        div 1 + (a - b, b);
+        return 1 + div(a - b, b);
     }
 }
 

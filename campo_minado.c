@@ -11,57 +11,36 @@ int main(){
 
     for (int i = 0; i < 5; i++){
         for (int j = 0; j < 5; j++){
-            int qtd = 0;
-            if(campo[i][j] == -1){
-                campo[i][j] = -1;
+            if (campo[i][j] == -1) {
+                continue;
             }
-            else{
-                    if(campo[i] != 0){
-                        if(campo[i - 1][j] == -1){
-                            qtd += 1;
-                        }
-                        if(campo [i] < 5){
-                            if(campo[i + 1][j] == -1){
-                                qtd += 1;
-                            }
-                        }
-                        if(campo[j] != 0){
-                            if(campo[i][j - 1] == -1){
-                                qtd += 1;
-                            }
-                            if(campo[i - 1][j - 1] == -1){
-                                qtd += 1;
-                            }
-                            if(campo[j] < 5){
-                                if(campo[i][j + 1] == -1){
-                                    qtd += 1;
-                                }
-                                if(campo[i + 1][j + 1] == -1){
-                                    qtd += 1;
-                                }
-                                if(campo[i + 1][j + 1] == -1){
-                        qtd += 1;
-                    }
-                            }
-                        }
-                    }
-    
-                    
-                    
-                
 
-                
-                
-            
-            campo[i][j] = qtd;
+            int qtd = 0;
+
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    int ni = i + x;
+                    int nj = j + y;
+
+
+                    if (ni >= 0 && ni < 5 && nj >= 0 && nj < 5 && campo[ni][nj] == -1) {
+                        qtd++;
+                    }
+                }
             }
-            
+    
+            campo[i][j] = qtd;
         }
     }
 
-     for (int i = 0; i < 5; i++){
-        for (int x = 0; x < 5; x++){
-            printf("%d, ", campo[i][x]);
+
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            if (campo[i][j] == -1) {
+                printf(" * ");
+            } else {
+                printf(" %d ", campo[i][j]);
+            }
         }
         printf("\n");
     }
