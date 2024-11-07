@@ -20,7 +20,7 @@ int div(int a, int b){
 
 int main(){
     int m = mod(10,4);
-    int d = div(10,1,0);
+    int d = div(10,1);
 
     printf("%d", d);
 
