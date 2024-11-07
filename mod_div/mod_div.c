@@ -9,12 +9,12 @@ int mod(int a, int b){
     }
 }
 
-int div(int a, int b, int q){
+int div(int a, int b){
     if (a < b){
-        return q;
+        return 0;
     }
     else{
-        div(a - b, b, q += 1);
+        div 1 + (a - b, b);
     }
 }
 
