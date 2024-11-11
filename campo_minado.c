@@ -22,7 +22,6 @@ int main(){
                     int ni = i + x;
                     int nj = j + y;
 
-
                     if (ni >= 0 && ni < 5 && nj >= 0 && nj < 5 && campo[ni][nj] == -1) {
                         qtd++;
                     }
@@ -32,7 +31,6 @@ int main(){
             campo[i][j] = qtd;
         }
     }
-
 
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
