@@ -88,7 +88,7 @@ int menu(){
 
 int main() {
     struct Contato agenda[100];
-    struct Contato pessoa;
+    //struct Contato pessoa;
     int op = menu();
     int cont = 0;
     int opContato = 0;
