@@ -1,98 +1,95 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct Pessoa {
     char nome[50];
     int idade;
     char tipoAtendimento[30];
-    int preferencial; 
+    int preferencial; // 1 para preferencial, 0 para normal
 } Pessoa;
 
-typedef struct Node {
-    Pessoa pessoa;
-    struct Node *proximo;
-} Node;
-
 typedef struct Fila {
-    Node *inicio;
-    Node *fim;
+    Pessoa pessoa;
+    struct Fila *proximo;
 } Fila;
 
-
-void inicializarFila(Fila *fila) {
-    fila->inicio = NULL;
-    fila->fim = NULL;
+// Inicializar a fila
+Fila *inicializarFila() {
+    return NULL;
 }
 
-
+// Verificar se a fila está vazia
 int filaVazia(Fila *fila) {
-    return fila->inicio == NULL;
+    return fila == NULL;
 }
 
+// Inserir uma pessoa na fila
+void inserirNaFila(Fila **fila, Pessoa pessoa) {
+    Fila *novo = (Fila *)malloc(sizeof(Fila));
+    if (!novo) {
+        printf("Erro de alocação de memória!\n");
+        return;
+    }
 
-void inserirNaFila(Fila *fila, Pessoa pessoa) {
-    Node *novo = (Node *)malloc(sizeof(Node));
     novo->pessoa = pessoa;
     novo->proximo = NULL;
 
-    if (filaVazia(fila)) {
-        fila->inicio = novo;
-        fila->fim = novo;
+    if (*fila == NULL) {
+        *fila = novo;
     } else {
-        fila->fim->proximo = novo;
-        fila->fim = novo;
+        Fila *atual = *fila;
+        while (atual->proximo != NULL) {
+            atual = atual->proximo;
+        }
+        atual->proximo = novo;
     }
 }
 
+// Remover uma pessoa da fila
+Pessoa removerDaFila(Fila **fila) {
+    Pessoa pessoaVazia = {"", 0, "", 0};
 
-Pessoa removerDaFila(Fila *fila) {
-    if (filaVazia(fila)) {
+    if (filaVazia(*fila)) {
         printf("Fila vazia!\n");
-        Pessoa pessoaVazia = {"", 0, "", 0};
         return pessoaVazia;
     }
 
-    Node *remover = fila->inicio;
+    Fila *remover = *fila;
     Pessoa pessoa = remover->pessoa;
-    fila->inicio = fila->inicio->proximo;
-
-    if (fila->inicio == NULL) {
-        fila->fim = NULL;
-    }
-
+    *fila = remover->proximo;
     free(remover);
+
     return pessoa;
 }
 
-
+// Listar as pessoas na fila
 void listarFila(Fila *fila) {
     if (filaVazia(fila)) {
         printf("Fila vazia!\n");
         return;
     }
 
-    Node *atual = fila->inicio;
+    Fila *atual = fila;
     while (atual != NULL) {
+        Pessoa p = atual->pessoa;
         printf("Nome: %s, Idade: %d, Tipo de Atendimento: %s, Preferencial: %s\n",
-               atual->pessoa.nome, atual->pessoa.idade,
-               atual->pessoa.tipoAtendimento,
-               atual->pessoa.preferencial ? "Sim" : "Não");
+               p.nome, p.idade, p.tipoAtendimento, p.preferencial ? "Sim" : "Não");
         atual = atual->proximo;
     }
 }
 
-
-void atenderPessoa(Fila *filaPreferencial, Fila *filaNormal, int *alternarAtendimento) {
-    if (*alternarAtendimento == 0 && !filaVazia(filaPreferencial)) {
+// Atender uma pessoa com base nas regras
+void atenderPessoa(Fila **filaPreferencial, Fila **filaNormal, int *alternarAtendimento) {
+    if (*alternarAtendimento == 0 && !filaVazia(*filaPreferencial)) {
         Pessoa atendida = removerDaFila(filaPreferencial);
         printf("Atendendo preferencial: %s\n", atendida.nome);
-        *alternarAtendimento = 1; 
-    } else if (!filaVazia(filaNormal)) {
+        *alternarAtendimento = 1; // Alterna para atendimento normal
+    } else if (!filaVazia(*filaNormal)) {
         Pessoa atendida = removerDaFila(filaNormal);
         printf("Atendendo normal: %s\n", atendida.nome);
-        *alternarAtendimento = 0; 
-    } else if (!filaVazia(filaPreferencial)) {
+        *alternarAtendimento = 0; // Alterna para atendimento preferencial
+    } else if (!filaVazia(*filaPreferencial)) {
         Pessoa atendida = removerDaFila(filaPreferencial);
         printf("Atendendo preferencial: %s\n", atendida.nome);
     } else {
@@ -101,10 +98,9 @@ void atenderPessoa(Fila *filaPreferencial, Fila *filaNormal, int *alternarAtendi
 }
 
 int main() {
-    Fila filaPreferencial, filaNormal;
+    Fila *filaPreferencial = inicializarFila();
+    Fila *filaNormal = inicializarFila();
     int opcao, alternarAtendimento = 0;
-    inicializarFila(&filaPreferencial);
-    inicializarFila(&filaNormal);
 
     do {
         printf("\nMenu:\n");
@@ -116,18 +112,18 @@ int main() {
         printf("6. Sair\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
-        getchar(); 
+        getchar(); // Limpar buffer
 
         switch (opcao) {
             case 1: {
                 Pessoa pessoa;
                 printf("Nome: ");
                 fgets(pessoa.nome, 50, stdin);
-                pessoa.nome[strcspn(pessoa.nome, "\n")] = '\0'; 
+                pessoa.nome[strcspn(pessoa.nome, "\n")] = '\0'; // Remover o '\n'
                 printf("Idade: ");
                 scanf("%d", &pessoa.idade);
                 getchar();
-                printf("Tipo de Atendimento (Idoso, Gestante, Deficiência): ");
+                printf("Tipo de Atendimento (Gestante, Lactante, Deficiência): ");
                 fgets(pessoa.tipoAtendimento, 30, stdin);
                 pessoa.tipoAtendimento[strcspn(pessoa.tipoAtendimento, "\n")] = '\0';
                 pessoa.preferencial = 1;
@@ -138,7 +134,7 @@ int main() {
                 Pessoa pessoa;
                 printf("Nome: ");
                 fgets(pessoa.nome, 50, stdin);
-                pessoa.nome[strcspn(pessoa.nome, "\n")] = '\0'; 
+                pessoa.nome[strcspn(pessoa.nome, "\n")] = '\0'; // Remover o '\n'
                 printf("Idade: ");
                 scanf("%d", &pessoa.idade);
                 getchar();
@@ -152,11 +148,11 @@ int main() {
                 break;
             case 4:
                 printf("Fila Preferencial:\n");
-                listarFila(&filaPreferencial);
+                listarFila(filaPreferencial);
                 break;
             case 5:
                 printf("Fila Normal:\n");
-                listarFila(&filaNormal);
+                listarFila(filaNormal);
                 break;
             case 6:
                 printf("Saindo...\n");
